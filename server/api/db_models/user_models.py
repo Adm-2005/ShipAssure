@@ -1,6 +1,7 @@
 # external imports
 import datetime
 from enum import Enum
+from bson import ObjectId
 from pydantic import Field
 from typing import Optional, List, Dict, Any
 from fastapi.encoders import jsonable_encoder
@@ -9,7 +10,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # internal imports
 from api.db_models.shipment_models import Mode
 from api.utils.object_id import PydanticObjectId
-from api.db_models.base_models import Serialization
+from api.db_models.base_models import Serialization, MutableId
 
 # Enumerate classes to be utilized in db models
 class Role(str, Enum):
@@ -24,7 +25,7 @@ class Type(str, Enum):
     large_scale = 'large business' # ships large quantities 
 
 # Model classes
-class User(Serialization):
+class User(Serialization, MutableId):
     """Represents an user of the application."""
     id: Optional[PydanticObjectId] = Field(default = None, alias = '_id')
     role: Role = Field(default = None)
@@ -73,14 +74,18 @@ class User(Serialization):
 
         Returns
         """
-        data = jsonable_encoder(self, custom_encoder = {PydanticObjectId: str})
+        data = self.model_dump(by_alias=True)
+    
+        for key, value in data.items():
+            if isinstance(value, (PydanticObjectId, ObjectId)):
+                data[key] = str(value)
 
         if data.get('hashed_password') and not include_password:
             data.pop('hashed_password')
 
         return data
 
-class Shipper(Serialization):
+class Shipper(Serialization, MutableId):
     """Represents an user who uses the platform to ship cargo."""
     id: Optional[PydanticObjectId] = Field(default = None, alias = '_id')
     user_id: Optional[PydanticObjectId] = Field(default = None)
@@ -90,15 +95,16 @@ class Shipper(Serialization):
     industry: Optional[str] = Field(default = '')
     sent_shipments: Optional[List[PydanticObjectId]] = Field(default_factory = list) 
 
-class Carrier(Serialization):
+class Carrier(Serialization, MutableId):
     """Represents an user who uses the platform to connect with shippers and deliver cargo."""
     id: Optional[PydanticObjectId] = Field(default = None, alias = '_id')
     user_id: Optional[PydanticObjectId] = Field(default = None)
-    type: Optional[Type]
+    type: Optional[Type] = Field(default = None)
     modes: Optional[List[Mode]] = Field(default_factory = list)
     org_name: Optional[str] = Field(default = None) # applicable only when type is not individual
     address: Optional[str] = Field(default = '')
     vehicles: Optional[List[PydanticObjectId]] = Field(default_factory = list) # carriers can register their vehicles
+    bids: Optional[List[PydanticObjectId]] = Field(default = None)
     delivered_shipments: Optional[List[PydanticObjectId]] = Field(default = None) # _id of Shipment model
     rating: Optional[float] = Field(default = None) # Range: 1.0 - 5.0
     total_ratings: Optional[int] = Field(default = 0) # total ratings

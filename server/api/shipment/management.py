@@ -15,9 +15,6 @@ from api.utils.pagination import pagination_links
 from api.db_models.user_models import Shipper, Carrier
 from api.db_models.shipment_models import Shipment, Status, Mode
 
-shippers = mongo.db['shippers']
-shipments = mongo.db['shipments']
-
 @ship_bp.route('/<string:s_id>', methods=['GET'])
 def get_shipment(s_id: str) -> Tuple[Dict[str, Any], int]:
     """
@@ -29,6 +26,8 @@ def get_shipment(s_id: str) -> Tuple[Dict[str, Any], int]:
     Returns
         [Tuple[Dict[str, Any]]]: response object, http status code.
     """
+    shippers = mongo.db['shippers']
+    shipments = mongo.db['shipments']
     try:
         if not ObjectId.is_valid(s_id):
             abort(400, 'Invalid object id.')
@@ -60,6 +59,8 @@ def get_all_shipments_of_a_shipper(sh_id: str) -> Tuple[Dict[str, Any]]:
     Returns 
         [Tuple[Dict[str, Any], int]]: response object, http status code.
     """
+    shippers = mongo.db['shippers']
+    shipments = mongo.db['shipments']
     try:
         if not ObjectId.is_valid(sh_id):
             abort(400, 'Invalid object id.')
@@ -112,6 +113,8 @@ def get_status_based_shipments_of_a_shipper(sh_id: str, status: Status) -> Tuple
     Returns
         [Tuple[Dict[str, Any], int]]: response object, http status code.
     """
+    shippers = mongo.db['shippers']
+    shipments = mongo.db['shipments']
     try:
         if not ObjectId.is_valid(sh_id):
             abort(400, 'Invalid object id.')
@@ -157,6 +160,8 @@ def get_status_based_shipments_of_a_shipper(sh_id: str, status: Status) -> Tuple
 @jwt_required()
 def create_shipment() -> Tuple[Dict[str, Any], int]:
     """Endpoint to create shipments."""
+    shippers = mongo.db['shippers']
+    shipments = mongo.db['shipments']
     try: 
         data = request.get_json()
         req_fields = [
@@ -257,11 +262,29 @@ def update_shipment(s_id: str) -> Tuple[Dict[str, Any], int]:
     Returns
         [Tuple[Dict[str, Any], int]]: json response object, http status code.
     """
-    if not ObjectId.is_valid(s_id):
-        abort(400, 'Invalid object id.')
+    shippers = mongo.db['shippers']
+    shipments = mongo.db['shipments']
+    try:
+        if not ObjectId.is_valid(s_id):
+            abort(400, 'Invalid object id.')
 
-    data = request.get_json()
-    if not data: 
-        abort(400, 'No field to update.')
+        data = request.get_json()
+        if not data: 
+            abort(400, 'No field to update.')
 
-    
+        res = shipments.find_one_and_update(
+            { '_id': ObjectId(s_id) }, 
+            { '$set': data }, 
+            return_document = ReturnDocument.AFTER
+        )
+
+        updated_shipment = Shipment(**res)
+
+        return jsonify({
+            'message': 'Shipment updated successfully.',
+            'data': updated_shipment.to_json()
+        }), 200
+
+    except Exception as e:
+        current_app.logger.error('Error while updating shipment %s: %s', s_id, e)
+        raise e

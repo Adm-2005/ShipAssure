@@ -10,7 +10,7 @@ def password_validator(password: str) -> bool:
     Returns
         [bool]: True if password is valid
     """
-    pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$'    
+    pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#$%^&+=]{8,}$'
     return re.match(pattern, password)
 
 def username_validator(username: str) -> bool:

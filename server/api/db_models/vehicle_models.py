@@ -5,9 +5,9 @@ from pydantic import field_validator, Field
 
 # internal imports
 from api.utils.object_id import PydanticObjectId
-from api.db_models.base_models import Serialization
+from api.db_models.base_models import Serialization, MutableId
 
-class Vehicle(Serialization):
+class Vehicle(Serialization, MutableId):
     """Represents vehicle used for shipment delivery."""
     id: Optional[PydanticObjectId] = Field(default = None, alias = '_id')
     carrier_id: Optional[PydanticObjectId] = Field(default = None)
