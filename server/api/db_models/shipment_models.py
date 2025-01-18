@@ -6,7 +6,7 @@ from typing import Optional, List, Dict, Any, Tuple
 
 # internal imports
 from api.utils.object_id import PydanticObjectId
-from server.api.db_models.base_models import Serialization
+from api.db_models.base_models import Serialization
 
 # Enumerate classes to be used alongside db models
 class ImpedimentType(str, Enum):
@@ -40,7 +40,7 @@ class Impediment(Serialization):
     delay_caused: datetime.timedelta = Field(default = None)
     resolved: bool = Field(default = False)
     additional_info: Optional[str] = Field(default = None)
-    occurred_at: datetime.datetime = Field(default_factory = datetime.datetime.now(tz = datetime.timezone.utc))
+    occurred_at: datetime.datetime = Field(default_factory = lambda:datetime.datetime.now(tz = datetime.timezone.utc))
     resolved_at: Optional[datetime.datetime] = Field(default = None)
     updated_at: Optional[datetime.datetime] = Field(default = None)
 
@@ -70,7 +70,7 @@ class Bid(Serialization):
     proposed_price: float = Field(default = None)
     proposed_vehicle: Optional[PydanticObjectId] = Field(default = None) # id of object of Vehicle model
     proposed_route: Optional[PydanticObjectId] = Field(default = None) # id of object of Route model
-    proposed_delivery_date: Optional[datetime.datetime.date] = Field(default = None)
+    proposed_delivery_date: Optional[datetime.datetime] = Field(default = None)
     accepted: bool = Field(default = False)
     additional_notes: Optional[str] = Field(default = '')
     created_at: datetime.datetime = Field(default_factory = lambda: datetime.datetime.now(tz = datetime.timezone.utc))
@@ -102,8 +102,8 @@ class Shipment(Serialization):
     predicted_route: Optional[PydanticObjectId] = Field(default = None) # id of an object of 'Route' model
     route_taken: Optional[PydanticObjectId] = Field(default = None) # id of an object of 'Route' model
     shipped_at: Optional[datetime.datetime] = Field(default = None) # datetime at which the shipment delivery starts
-    estimated_delivery_date: datetime.datetime.date = Field(default = None)
-    delivered_at: Optional[datetime.datetime.date] = Field(default = None) # only when status is delivered
+    estimated_delivery_date: datetime.datetime = Field(default = None)
+    delivered_at: Optional[datetime.datetime] = Field(default = None) # only when status is delivered
     created_at: datetime.datetime = Field(default_factory = lambda: datetime.datetime.now(tz = datetime.timezone.utc))
     updated_at: Optional[datetime.datetime]
 
@@ -117,7 +117,7 @@ class Shipment(Serialization):
             raise ValueError('Estimated date must be greater than or equal to shipping date.')
         return v
 
-    @field_validator('predicted_price', 'actual_price', 'cargo_load', 'distance')
+    @field_validator('price', 'cargo_load', 'distance')
     def positive_values(cls, v):
         if v <= 0:
             raise ValueError(f'Must be a positive value.')

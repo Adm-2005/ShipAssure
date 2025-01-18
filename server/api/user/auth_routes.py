@@ -13,9 +13,9 @@ from api.utils.object_id import PydanticObjectId
 from api.db_models.user_models import User, Shipper, Carrier
 from api.utils.validators import password_validator, email_validator, username_validator
 
-users = mongo.db['users']
-shippers = mongo.db['shippers']
-carriers = mongo.db['carriers']
+users = mongo.db.users
+shippers = mongo.db.shippers
+carriers = mongo.db.carriers
 
 @user_bp.route('/auth/register', methods = ['POST'])
 def register() -> Tuple[Dict[str, Any], int]:

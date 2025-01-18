@@ -14,8 +14,8 @@ from api.utils.object_id import PydanticObjectId
 from api.utils.pagination import pagination_links
 from api.db_models.vehicle_models import Vehicle
 
-carriers = mongo.db['carriers']
-vehicles = mongo.db['vehicles']
+carriers = mongo.db.carriers
+vehicles = mongo.db.vehicles
 rent_information = mongo.db['rent_information']
 
 @user_bp.route('/vehicles/<string:v_id>', methods=['GET'])
