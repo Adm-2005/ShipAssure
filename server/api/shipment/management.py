@@ -153,7 +153,7 @@ def get_status_based_shipments_of_a_shipper(sh_id: str, status: Status) -> Tuple
         current_app.logger.error('Error while fetching %s shipments of the shipper %s: %s', status, sh_id, e)
         raise e
     
-@ship_bp('/', methods=['POST'])
+@ship_bp.route('/', methods=['POST'])
 @jwt_required()
 def create_shipment() -> Tuple[Dict[str, Any], int]:
     """Endpoint to create shipments."""

@@ -1,7 +1,7 @@
 # external imports
 import datetime
 from enum import Enum
-from pydantic import Field, field_validator
+from pydantic import Field
 from typing import Optional, List, Dict, Any
 from fastapi.encoders import jsonable_encoder
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -9,7 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # internal imports
 from api.db_models.shipment_models import Mode
 from api.utils.object_id import PydanticObjectId
-from server.api.db_models.base_models import Serialization
+from api.db_models.base_models import Serialization
 
 # Enumerate classes to be utilized in db models
 class Role(str, Enum):
@@ -37,7 +37,7 @@ class User(Serialization):
     wallet_connected: bool = Field(default = False)
     wallet_address: Optional[str] = Field(default = None)
     hashed_password: Optional[str] = Field(default = None)
-    created_at: datetime.datetime = Field(default_factory = datetime.datetime.now(tz = datetime.timezone.utc))
+    created_at: datetime.datetime = Field(default_factory = lambda: datetime.datetime.now(tz = datetime.timezone.utc))
 
     def set_password(self, password: str) -> None:
         """

@@ -1,14 +1,13 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { useAccount } from 'wagmi'
-import { useChainId } from 'wagmi' // This replaces useNetwork
-import { useEffect } from 'react'
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import '@rainbow-me/rainbowkit/styles.css';
+import { useAccount, useChainId, useSwitchChain } from 'wagmi';
+import { useEffect } from 'react';
+import { polygonAmoy } from 'wagmi/chains';
 
 const WalletConnection = () => {
-  const { address, isConnected } = useAccount()
-  const chainId = useChainId()
-
-  console.log("Connected wallet address:", address)
-  console.log("Connected chain ID:", chainId)
+  const { address, isConnected } = useAccount();
+  const chainId = useChainId();
+  const { switchChain } = useSwitchChain();
 
   const handleSubmit = async () => {
     try {
@@ -17,46 +16,51 @@ const WalletConnection = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ address, chainId }),
-      })
+        body: JSON.stringify({ 
+          address, 
+          chainId 
+        }),
+      });
 
       if (res.ok) {
-        const data = await res.json()
-        console.log("Backend response:", data)
+        const data = await res.json();
+        console.log("Backend response:", data);
       } else {
-        console.error("Failed to send data to backend:", res.statusText)
+        console.error("Failed to send data to backend:", res.statusText);
       }
     } catch (error) {
-      console.error("Error submitting data to backend:", error)
+      console.error("Error submitting data to backend:", error);
     }
-  }
+  };
 
   useEffect(() => {
     if (isConnected && address && chainId) {
-      handleSubmit()
+      handleSubmit();
     }
-  }, [isConnected, address, chainId])
+  }, [isConnected, address, chainId]);
 
   return (
-    <div className="p-4">
-      <ConnectButton 
-        chainStatus="icon"
-        showBalance={true}
-      />
+    <>
+      <div className="flex flex-col items-center gap-4">
+        <ConnectButton />
+        
+        {isConnected && chainId !== 80002 && (
+          <button
+            onClick={() => switchChain({ chainId: polygonAmoy.id })}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          >
+            Switch to Polygon Amoy
+          </button>
+        )}
 
-      {isConnected && chainId !== 80001 && (
-        <div className="mt-4 p-4 bg-yellow-100 text-yellow-700 rounded-lg">
-          Please switch to Polygon Mumbai Testnet
-        </div>
-      )}
+        {!isConnected && (
+          <div className="mt-4 p-4 bg-blue-100 text-blue-700 rounded-lg">
+            Please connect your wallet to continue
+          </div>
+        )}
+      </div>
+    </>
+  );
+};
 
-      {!isConnected && (
-        <div className="mt-4 p-4 bg-blue-100 text-blue-700 rounded-lg">
-          Please connect your wallet to continue
-        </div>
-      )}
-    </div>
-  )
-}
-
-export default WalletConnection
+export default WalletConnection;

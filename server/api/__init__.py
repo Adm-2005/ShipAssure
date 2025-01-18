@@ -44,14 +44,10 @@ def create_app(config_class = Config):
     # to avoid circular imports
     from api.user import user_bp
     from api.shipment import ship_bp
-    from api.tracking import track_bp
     from api.services import services_bp
-    from api.analytics import analytics_bp
 
     app.register_blueprint(user_bp, url_prefix = '/users')
     app.register_blueprint(ship_bp, url_prefix = '/shipments')
-    app.register_blueprint(track_bp, url_prefix = '/tracking')
     app.register_blueprint(services_bp, url_prefix = '/services')
-    app.register_blueprint(analytics_bp, url_prefix = '/analytics')
 
     return app

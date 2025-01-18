@@ -12,7 +12,7 @@ from api.db_models.user_models import User
 from api.utils.object_id import PydanticObjectId
 from api.utils.validators import email_validator
 
-users = mongo.db['users']
+users = mongo.db.users
 
 @user_bp.route('/<string:id>', methods=['GET'])
 def get_profile(id: str) -> Tuple[Dict[str, Any], int]:
