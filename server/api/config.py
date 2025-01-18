@@ -9,6 +9,7 @@ class Config:
     """ Defines configurations and environment variables for flask app. """
 
     TESTING = os.environ.get('TESTING', 'False').lower() in ['true', 'yes']
+    MODEL_DIR = os.path.join(base_dir, 'models')
     CLIENT_URL = os.environ.get('CLIENT_URL')
     MONGO_URI = os.environ.get('MONGO_URI')
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')

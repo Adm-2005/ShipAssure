@@ -12,8 +12,6 @@ from api.db_models.user_models import User
 from api.utils.object_id import PydanticObjectId
 from api.utils.validators import email_validator
 
-users = mongo.db.users
-
 @user_bp.route('/<string:id>', methods=['GET'])
 def get_profile(id: str) -> Tuple[Dict[str, Any], int]:
     """
@@ -25,6 +23,7 @@ def get_profile(id: str) -> Tuple[Dict[str, Any], int]:
     Returns
         [Tuple[Dict[str, Any]]]: json representation, http status code
     """
+    users = mongo.db.users
     try: 
         if not ObjectId.is_valid(id):
             abort(400, 'Invalid user id.')
@@ -34,7 +33,7 @@ def get_profile(id: str) -> Tuple[Dict[str, Any], int]:
         if not res:
             abort(404, 'User not found.')
 
-        res['_id'] = PydanticObjectId(id)
+        res['_id'] = PydanticObjectId(str(id))
         user = User(**res)
 
         return jsonify({ 
@@ -50,6 +49,7 @@ def get_profile(id: str) -> Tuple[Dict[str, Any], int]:
 @jwt_required()
 def update_user() -> Tuple[Dict[str, Any], int]:
     """Endpoint to update user."""
+    users = mongo.db.users
     try:
         current_user_id = get_jwt_identity()
         data = request.get_json() 
@@ -91,6 +91,7 @@ def update_user() -> Tuple[Dict[str, Any], int]:
 @jwt_required()
 def delete_user() -> Tuple[Dict[str, Any], int]:
     """Endpoint to delete user."""
+    users = mongo.db.users
     try:
         current_user_id = get_jwt_identity()
         deleted_user = users.find_one_and_delete({ '_id': ObjectId(current_user_id) })
@@ -111,15 +112,31 @@ def delete_user() -> Tuple[Dict[str, Any], int]:
 @jwt_required()
 def store_wallet_address() -> Tuple[Dict[str, Any], int]:
     """Stores the address of user's wallet."""
-    current_user_id = get_jwt_identity()
-    user = users.find_one({ '_id': ObjectId(current_user_id) })
-
-    if not user:
-        abort(404, 'User not found.')
+    users = mongo.db.users
     
-    data = request.get_json()
+    try:
+        current_user_id = get_jwt_identity()
 
-    if not data or not data.get('address'):
-        abort(400, 'Missing required fields.')
+        data = request.get_json()
 
-    wallet_address = data.get('address').strip()
+        if not data or not data.get('address'):
+            abort(400, 'Missing required fields.')
+
+        wallet_address = data.get('address').strip()
+
+        res = users.find_one_and_update(
+            { '_id': ObjectId(current_user_id) }, 
+            { '$set': { 'wallet_address': wallet_address }},
+            return_document = ReturnDocument.AFTER
+        )
+
+        user = User(**res)
+
+        return jsonify({
+            'message': 'Wallet address stored successfully.',
+            'data': user.to_json()
+        }), 200
+
+    except Exception as e:
+        current_app.logger.error('Error while storing wallet address: %s', e)
+        raise e

@@ -6,7 +6,7 @@ from typing import Optional, List, Dict, Any, Tuple
 
 # internal imports
 from api.utils.object_id import PydanticObjectId
-from api.db_models.base_models import Serialization
+from api.db_models.base_models import Serialization, MutableId
 
 # Enumerate classes to be used alongside db models
 class ImpedimentType(str, Enum):
@@ -33,7 +33,7 @@ class Status(str, Enum):
     delivered = 'delivered'
 
 # Model Classes
-class Impediment(Serialization):
+class Impediment(Serialization, MutableId):
     """Represents an issue that occurred while delivering the shipment"""
     id: Optional[PydanticObjectId] = Field(default = None, alias = '_id')
     type: ImpedimentType = Field(default = None)
@@ -48,28 +48,26 @@ class Impediment(Serialization):
         self.resolved = True
         self.resolved_at = datetime.datetime.now(tz = datetime.timezone.utc)
 
-class Location(Serialization):
+class Location(Serialization, MutableId):
     """Represents current or previous location of the shipment"""
     id: Optional[PydanticObjectId] = Field(default = None, alias = '_id')
     location: Tuple[float, float] = Field(default_factory = tuple)  # (latitude, longitude)
     timestamp: datetime.datetime = Field(default_factory = lambda: datetime.datetime.now(tz = datetime.timezone.utc))
 
-class Route(Serialization):
+class Route(Serialization, MutableId):
     """Represents predicted and actual routes"""
     id: Optional[PydanticObjectId] = Field(default = None, alias = '_id')
     path: List[Tuple[float, float]] = Field(default_factory = list)  # List of co-ordinates (latitude, longitude)
     distance: Optional[float] = Field(default = None)
     estimated_duration: Optional[datetime.timedelta] = Field(default = None)
 
-class Bid(Serialization):
+class Bid(Serialization, MutableId):
     """Represents bid on a shipment"""
-    id: Optional[PydanticObjectId] = Field(default = None, alias = '_id')
-    shipper_id: Optional[PydanticObjectId] = Field(default = None) 
+    id: Optional[PydanticObjectId] = Field(default = None, alias = '_id') 
     carrier_id: Optional[PydanticObjectId] = Field(default = None)
     shipment_id: Optional[PydanticObjectId] = Field(default = None)
     proposed_price: float = Field(default = None)
     proposed_vehicle: Optional[PydanticObjectId] = Field(default = None) # id of object of Vehicle model
-    proposed_route: Optional[PydanticObjectId] = Field(default = None) # id of object of Route model
     proposed_delivery_date: Optional[datetime.datetime] = Field(default = None)
     accepted: bool = Field(default = False)
     additional_notes: Optional[str] = Field(default = '')
@@ -81,14 +79,14 @@ class Bid(Serialization):
         self.accepted = True
         self.accepted_at = datetime.datetime.now(tz = datetime.timezone.utc)
 
-class Shipment(Serialization):
+class Shipment(Serialization, MutableId):
     """Represents a shipment"""
     id: Optional[PydanticObjectId] = Field(default = None, alias = '_id')
     shipper_id: Optional[PydanticObjectId] = Field(default = None)
     carrier_id: Optional[PydanticObjectId] = Field(default = None)
     status: Status = Field(default = None)
     modes: List[Mode] = Field(default_factory = list)
-    pickup_point: str = Field(default = None)
+    pickup_point: Optional[str] = Field(default = None)
     origin: Dict[str, Any] = Field(default_factory = dict) # includes postal code, city and country
     destination: Dict[str, Any] = Field(default_factory = dict) # includes postal code, city and country
     distance: float = Field(default = None)

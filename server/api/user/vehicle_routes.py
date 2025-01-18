@@ -14,10 +14,6 @@ from api.utils.object_id import PydanticObjectId
 from api.utils.pagination import pagination_links
 from api.db_models.vehicle_models import Vehicle
 
-carriers = mongo.db.carriers
-vehicles = mongo.db.vehicles
-rent_information = mongo.db['rent_information']
-
 @user_bp.route('/vehicles/<string:v_id>', methods=['GET'])
 def get_vehicle(v_id: str) -> Tuple[Dict[str, Any], int]:
     """
@@ -29,6 +25,9 @@ def get_vehicle(v_id: str) -> Tuple[Dict[str, Any], int]:
     Returns
         [Tuple[Dict[str, Any], int]]: response object, http status code.
     """
+    carriers = mongo.db.carriers
+    vehicles = mongo.db.vehicles
+    rent_information = mongo.db['rent_information']
     try:
         if not ObjectId.is_valid(v_id):
             abort(400, 'Invalid object id.')
@@ -60,6 +59,8 @@ def get_vehicles(c_id: str) -> Tuple[Dict[str, Any], int]:
     Returns
         [Tuple[Dict[str, Any], int]]: paginated response, http status code.
     """
+    carriers = mongo.db.carriers
+    vehicles = mongo.db.vehicles
     try:
         if not ObjectId.is_valid(c_id):
             abort(400, 'Invalid carrier id.')
@@ -114,6 +115,8 @@ def add_vehicle(c_id: str) -> Tuple[Dict[str, Any], int]:
     Returns 
         [Tuple[Dict[str, Any], int]]: response object, http status code.
     """
+    carriers = mongo.db.carriers
+    vehicles = mongo.db.vehicles
     try:
         if not ObjectId.is_valid(c_id):
             abort(400, 'Invalid carrier id.')
@@ -178,6 +181,8 @@ def update_vehicle(c_id: str, v_id: str) -> Tuple[Dict[str, Any], int]:
     Returns
         [Tuple[Dict[str, Any], int]]: response object, http status code.
     """
+    carriers = mongo.db.carriers
+    vehicles = mongo.db.vehicles
     try:
         if not ObjectId.is_valid(c_id) or not ObjectId.is_valid(v_id):
             abort(400, 'Invalid object id.')
@@ -216,6 +221,8 @@ def delete_vehicle(c_id: str, v_id: str) -> Tuple[Dict[str, Any], int]:
     Returns
         [Tuple[Dict[str, Any], int]]: response object, http status code.
     """
+    carriers = mongo.db.carriers
+    vehicles = mongo.db.vehicles
     try:
         if not ObjectId.is_valid(c_id) or not ObjectId.is_valid(v_id):
             abort(400, 'Invalid object id.')
