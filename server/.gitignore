@@ -1,0 +1,8 @@
+# virtual environment files
+venv/
+
+# cache files
+__pycache__/
+
+# config/secrets
+.env
