@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { navLinks } from '../utils/information';
 import { navLink } from '../utils/typings';
+import WalletConnection from '../components/walletConnection';
+
 
 const Navbar = () => {
   return (
@@ -11,6 +13,7 @@ const Navbar = () => {
           {link.name}
         </Link>
       ))}
+      <WalletConnection />
     </nav>
   );
 };
