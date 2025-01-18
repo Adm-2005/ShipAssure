@@ -1,40 +1,40 @@
-import { Button } from "../../components/ui/Button"
-import { Input } from "../../components/ui/Input"
-import { Label } from "../../components/ui/Label"
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
+import { Label } from '../../components/ui/Label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../components/ui/Select"
+} from '../../components/ui/Select';
 
 type OrganizationDetailsStepProps = {
   organizationDetails: {
-    name: string
-    employeeCount: string
-    type: string
-    yearsInBusiness: string
-  }
+    name: string;
+    employeeCount: string;
+    type: string;
+    yearsInBusiness: string;
+  };
   setOrganizationDetails: (details: {
-    name: string
-    employeeCount: string
-    type: string
-    yearsInBusiness: string
-  }) => void
-  onNext: () => void
-  onBack: () => void
-}
+    name: string;
+    employeeCount: string;
+    type: string;
+    yearsInBusiness: string;
+  }) => void;
+  onNext: () => void;
+  onBack: () => void;
+};
 
 export function OrganizationDetailsStep({
   organizationDetails,
   setOrganizationDetails,
   onNext,
-  onBack
+  onBack,
 }: OrganizationDetailsStepProps) {
   const handleChange = (field: string, value: string) => {
-    setOrganizationDetails({ ...organizationDetails, [field]: value })
-  }
+    setOrganizationDetails({ ...organizationDetails, [field]: value });
+  };
 
   const isFormValid = () => {
     return (
@@ -42,8 +42,8 @@ export function OrganizationDetailsStep({
       organizationDetails.employeeCount &&
       organizationDetails.type &&
       organizationDetails.yearsInBusiness
-    )
-  }
+    );
+  };
 
   return (
     <div className="space-y-4">
@@ -103,6 +103,5 @@ export function OrganizationDetailsStep({
         </Button>
       </div>
     </div>
-  )
+  );
 }
-

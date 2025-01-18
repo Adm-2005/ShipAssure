@@ -1,14 +1,14 @@
-"use client"
+'use client';
 
-import { Link } from "react-router-dom"
-import { useState } from "react"
-import { Eye, EyeOff } from 'lucide-react'
-import { Button } from "../components/ui/Button"
-import { Input } from "../components/ui/Input"
-import { Label } from "../components/ui/Label"
+import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
+import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/Input';
+import { Label } from '../components/ui/Label';
 
 const SignIn = () => {
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="flex items-center justify-center min-h-screen py-8">
@@ -16,7 +16,9 @@ const SignIn = () => {
         <div className="space-y-6">
           <div className="space-y-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">Welcome!</h1>
-            <p className="text-sm text-muted-foreground">We are glad to see you</p>
+            <p className="text-sm text-muted-foreground">
+              We are glad to see you
+            </p>
           </div>
           <form className="space-y-4">
             <div className="space-y-2">
@@ -41,7 +43,7 @@ const SignIn = () => {
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   required
                 />
                 <Button
@@ -64,15 +66,18 @@ const SignIn = () => {
             </Button>
           </form>
           <div className="text-center text-sm">
-            Don't have an account yet?{" "}
-            <Link to="/pages/signup" className="text-blue-600 hover:text-blue-500">
+            Don't have an account yet?{' '}
+            <Link
+              to="/pages/signup"
+              className="text-blue-600 hover:text-blue-500"
+            >
               Sign up
             </Link>
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SignIn
+export default SignIn;

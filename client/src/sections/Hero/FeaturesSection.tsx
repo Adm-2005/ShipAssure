@@ -1,42 +1,55 @@
-import { Package, DollarSign, ClipboardList, CreditCard, MapPin, BarChart3 } from 'lucide-react'; // Updated icons
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/Card";
+import {
+  Package,
+  DollarSign,
+  ClipboardList,
+  CreditCard,
+  MapPin,
+  BarChart3,
+} from 'lucide-react'; // Updated icons
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/Card';
 
 const features = [
   {
     icon: <Package className="h-8 w-8 text-blue-600" />,
-    title: "Automated Shipment Creation",
+    title: 'Automated Shipment Creation',
     description:
-      "Quickly create shipments by entering details like origin, destination, cargo type, load, and special requirements, streamlining the process and reducing manual effort.",
+      'Quickly create shipments by entering details like origin, destination, cargo type, load, and special requirements, streamlining the process and reducing manual effort.',
   },
   {
     icon: <DollarSign className="h-8 w-8 text-blue-600" />,
-    title: "Carrier Bid Management",
+    title: 'Carrier Bid Management',
     description:
-      "Invite carriers to bid on shipments, ensuring competitive pricing and service quality. Compare bids on price, delivery time, and reputation to select the best deal.",
+      'Invite carriers to bid on shipments, ensuring competitive pricing and service quality. Compare bids on price, delivery time, and reputation to select the best deal.',
   },
   {
     icon: <ClipboardList className="h-8 w-8 text-blue-600" />,
-    title: "Smart Contract Integration",
+    title: 'Smart Contract Integration',
     description:
-      "Automatically generate smart contracts upon bid acceptance to ensure secure, transparent agreements between shippers and carriers.",
+      'Automatically generate smart contracts upon bid acceptance to ensure secure, transparent agreements between shippers and carriers.',
   },
   {
     icon: <CreditCard className="h-8 w-8 text-blue-600" />,
-    title: "Seamless Payment Options",
+    title: 'Seamless Payment Options',
     description:
-      "Flexible payment methods, including crypto wallets and traditional gateways, for secure and hassle-free transactions.",
+      'Flexible payment methods, including crypto wallets and traditional gateways, for secure and hassle-free transactions.',
   },
   {
     icon: <MapPin className="h-8 w-8 text-blue-600" />,
-    title: "Real-Time Shipment Tracking",
+    title: 'Real-Time Shipment Tracking',
     description:
-      "Provides live updates on shipment status, from pickup to delivery, ensuring full transparency and peace of mind.",
+      'Provides live updates on shipment status, from pickup to delivery, ensuring full transparency and peace of mind.',
   },
   {
     icon: <BarChart3 className="h-8 w-8 text-blue-600" />,
-    title: "Performance Analytics and Insights",
+    title: 'Performance Analytics and Insights',
     description:
-      "Delivers actionable insights on past shipments, carrier performance, and cost trends to optimize future shipping decisions.",
+      'Delivers actionable insights on past shipments, carrier performance, and cost trends to optimize future shipping decisions.',
   },
 ];
 

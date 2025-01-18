@@ -1,16 +1,14 @@
-import React from "react"
+import React from 'react';
 
 interface AuthLayoutProps {
-  children: React.ReactNode
-  rightContent: React.ReactNode
+  children: React.ReactNode;
+  rightContent: React.ReactNode;
 }
 
 export function AuthLayout({ children, rightContent }: AuthLayoutProps) {
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="w-full border-b bg-white">
-        
-      </header>
+      <header className="w-full border-b bg-white"></header>
       <main className="flex-1">
         <div className="container flex min-h-[calc(100vh-4rem-4rem)] items-center justify-center">
           <div className="w-full max-w-5xl rounded-xl border bg-white shadow-sm">
@@ -26,6 +24,5 @@ export function AuthLayout({ children, rightContent }: AuthLayoutProps) {
         </div>
       </main>
     </div>
-  )
+  );
 }
-

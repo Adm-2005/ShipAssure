@@ -16,20 +16,20 @@ const WalletConnection = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          address, 
-          chainId 
+        body: JSON.stringify({
+          address,
+          chainId,
         }),
       });
 
       if (res.ok) {
         const data = await res.json();
-        console.log("Backend response:", data);
+        console.log('Backend response:', data);
       } else {
-        console.error("Failed to send data to backend:", res.statusText);
+        console.error('Failed to send data to backend:', res.statusText);
       }
     } catch (error) {
-      console.error("Error submitting data to backend:", error);
+      console.error('Error submitting data to backend:', error);
     }
   };
 
@@ -43,7 +43,7 @@ const WalletConnection = () => {
     <>
       <div className="flex flex-col items-center gap-4">
         <ConnectButton />
-        
+
         {isConnected && chainId !== 80002 && (
           <button
             onClick={() => switchChain({ chainId: polygonAmoy.id })}

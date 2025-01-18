@@ -1,14 +1,14 @@
-import { Link } from "react-router-dom";
-import { Button } from "../components/ui/Button";
-import { FeaturesSection } from "../sections/Hero/FeaturesSection";
+import { Link } from 'react-router-dom';
+import { Button } from '../components/ui/Button';
+import { FeaturesSection } from '../sections/Hero/FeaturesSection';
 import Hero from '../assets/hero.jpg';
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
-  const [from, setFrom] = useState("");  // State to store "From" input value
-  const [to, setTo] = useState("");      // State to store "To" input value
-  const navigate = useNavigate();       // Hook to handle navigation
+  const [from, setFrom] = useState(''); // State to store "From" input value
+  const [to, setTo] = useState(''); // State to store "To" input value
+  const navigate = useNavigate(); // Hook to handle navigation
 
   // Handle the form submission
   const handleSubmit = (e: React.FormEvent) => {
@@ -16,7 +16,7 @@ const Home = () => {
 
     // Validate if both "From" and "To" fields are filled
     if (from.trim() && to.trim()) {
-      navigate("/pages/CreateShipmentForm"); // Navigate to CreateShipmentForm page (adjust path accordingly)
+      navigate('/pages/CreateShipmentForm'); // Navigate to CreateShipmentForm page (adjust path accordingly)
     } else {
       alert("Please fill in both the 'From' and 'To' fields."); // Alert if required fields are not filled
     }
@@ -29,11 +29,13 @@ const Home = () => {
         {/* Left Content */}
         <div className="flex flex-col justify-center space-y-6 z-10">
           <h1 className="text-5xl font-extrabold leading-tight tracking-tight text-gray-800">
-            Where <span className="text-blue-600">Quality</span> and <span className="text-blue-600">Security</span> Converge for
+            Where <span className="text-blue-600">Quality</span> and{' '}
+            <span className="text-blue-600">Security</span> Converge for
             <br /> Enterprise Excellence
           </h1>
           <p className="text-lg text-gray-600 max-w-xl">
-            Streamline your logistics operations with innovative solutions tailored for your business needs.
+            Streamline your logistics operations with innovative solutions
+            tailored for your business needs.
           </p>
           <div className="space-y-4">
             {/* Inputs */}
@@ -87,7 +89,8 @@ const Home = () => {
             Ready to Ship?
           </h2>
           <p className="mb-8 text-lg text-primary-foreground/80 max-w-2xl mx-auto">
-            Get started with SeaRates today and experience seamless shipping solutions for your business
+            Get started with SeaRates today and experience seamless shipping
+            solutions for your business
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/pages/signin">

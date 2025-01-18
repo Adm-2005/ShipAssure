@@ -42,7 +42,10 @@ const Main = () => {
                   <Route path="/pages/signin" element={<SignIn />} />
                   <Route path="/pages/signup" element={<SignUp />} />
                   <Route path="/pages/onboarding" element={<Onboarding />} />
-                  <Route path="/pages/CreateShipmentForm" element={<CreateShipmentForm />} />
+                  <Route
+                    path="/pages/CreateShipmentForm"
+                    element={<CreateShipmentForm />}
+                  />
                 </Routes>
               </main>
               <Footer />
@@ -59,5 +62,5 @@ const root = createRoot(container!);
 root.render(
   <React.StrictMode>
     <Main />
-  </React.StrictMode>
+  </React.StrictMode>,
 );

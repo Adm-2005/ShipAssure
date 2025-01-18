@@ -1,13 +1,12 @@
-import { Link } from "react-router-dom";
-import { Button } from "../components/ui/Button";
-import WalletConnection from '../components/walletConnection';
-
+import { Link } from 'react-router-dom';
+import { Button } from '../components/ui/Button';
+import WalletConnection from './WalletConnection';
 
 const Navbar = () => {
   const handleScroll = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -23,7 +22,7 @@ const Navbar = () => {
         <nav className="flex items-center space-x-8">
           <button
             className="text-gray-800 hover:text-blue-600 transition-colors"
-            onClick={() => handleScroll("home")}
+            onClick={() => handleScroll('home')}
           >
             Home
           </button>
@@ -35,13 +34,13 @@ const Navbar = () => {
           </Link>
           <button
             className="text-gray-800 hover:text-blue-600 transition-colors"
-            onClick={() => handleScroll("features")}
+            onClick={() => handleScroll('features')}
           >
             About
           </button>
           <button
             className="text-gray-800 hover:text-blue-600 transition-colors"
-            onClick={() => handleScroll("footer")}
+            onClick={() => handleScroll('footer')}
           >
             Contact
           </button>
@@ -52,7 +51,7 @@ const Navbar = () => {
             </Button>
           </Link>
           <WalletConnection />
-    </nav>
+        </nav>
       </div>
     </header>
   );

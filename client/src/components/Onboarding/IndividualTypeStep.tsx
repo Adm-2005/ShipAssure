@@ -1,16 +1,23 @@
-import { Button } from "../../components/ui/Button"
+import { Button } from '../../components/ui/Button';
 
 type IndividualTypeStepProps = {
-  individualType: 'shipper' | 'carrier' | null
-  setIndividualType: (type: 'shipper' | 'carrier') => void
-  onNext: () => void
-  onBack: () => void
-}
+  individualType: 'shipper' | 'carrier' | null;
+  setIndividualType: (type: 'shipper' | 'carrier') => void;
+  onNext: () => void;
+  onBack: () => void;
+};
 
-export function IndividualTypeStep({ individualType, setIndividualType, onNext, onBack }: IndividualTypeStepProps) {
+export function IndividualTypeStep({
+  individualType,
+  setIndividualType,
+  onNext,
+  onBack,
+}: IndividualTypeStepProps) {
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold mb-4">Are you a shipper or a carrier?</h2>
+      <h2 className="text-xl font-semibold mb-4">
+        Are you a shipper or a carrier?
+      </h2>
       <div className="flex space-x-4">
         <Button
           onClick={() => setIndividualType('shipper')}
@@ -36,6 +43,5 @@ export function IndividualTypeStep({ individualType, setIndividualType, onNext, 
         </Button>
       </div>
     </div>
-  )
+  );
 }
-

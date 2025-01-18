@@ -1,37 +1,37 @@
-"use client"
+'use client';
 
-import { Link, useNavigate } from "react-router-dom"
-import { useState } from "react"
-import { Eye, EyeOff } from 'lucide-react'
-import { Button } from "../components/ui/Button"
-import { Input } from "../components/ui/Input"
-import { Label } from "../components/ui/Label"
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
+import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/Input';
+import { Label } from '../components/ui/Label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../components/ui/Select"
+} from '../components/ui/Select';
 
 export default function SignUp() {
-  const [showPassword, setShowPassword] = useState(false)
-  const navigate = useNavigate()
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   // Handler for form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault(); // Prevent form from submitting if validation fails
     const form = e.target as HTMLFormElement;
-    
+
     // Check if the form is valid
     if (form.checkValidity()) {
       // If valid, proceed with form submission logic (e.g., navigating to the next page)
-      console.log("Form is valid, submitting...");
-      navigate('/pages/onboarding') // Navigate to the onboarding page if the form is valid
+      console.log('Form is valid, submitting...');
+      navigate('/pages/onboarding'); // Navigate to the onboarding page if the form is valid
     } else {
-      console.log("Please fill all required fields.");
+      console.log('Please fill all required fields.');
     }
-  }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen py-8">
@@ -94,8 +94,9 @@ export default function SignUp() {
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? "text" : "password"}
-                  required minLength={8}
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  minLength={8}
                 />
                 <Button
                   type="button"
@@ -128,11 +129,11 @@ export default function SignUp() {
             </div>
 
             <div className="text-sm text-muted-foreground">
-              By creating an account, you agree to our{" "}
+              By creating an account, you agree to our{' '}
               <Link to="/terms" className="text-blue-600 hover:text-blue-500">
                 Terms of service
-              </Link>{" "}
-              and{" "}
+              </Link>{' '}
+              and{' '}
               <Link to="/privacy" className="text-blue-600 hover:text-blue-500">
                 Privacy Policy
               </Link>
@@ -142,17 +143,23 @@ export default function SignUp() {
               Create account
             </Button>
           </form>
-          
+
           <div className="space-y-2 text-center text-sm">
             <div>
-              Back to{" "}
-              <Link to="/pages/signin" className="text-blue-600 hover:text-blue-500">
+              Back to{' '}
+              <Link
+                to="/pages/signin"
+                className="text-blue-600 hover:text-blue-500"
+              >
                 Sign in
               </Link>
             </div>
             <div>
-              Are you interested in{" "}
-              <Link to="/vendor-account" className="text-blue-600 hover:text-blue-500">
+              Are you interested in{' '}
+              <Link
+                to="/vendor-account"
+                className="text-blue-600 hover:text-blue-500"
+              >
                 Vendor account
               </Link>
               ?
@@ -161,5 +168,5 @@ export default function SignUp() {
         </div>
       </div>
     </div>
-  )
+  );
 }

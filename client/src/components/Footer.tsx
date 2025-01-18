@@ -1,5 +1,5 @@
-import {Link} from "react-router-dom"
-import { Facebook, Twitter, Linkedin, Instagram } from 'lucide-react'
+import { Link } from 'react-router-dom';
+import { Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -9,28 +9,76 @@ const Footer = () => {
           <div>
             <h3 className="font-bold text-lg mb-4">About ShipAssure</h3>
             <ul className="space-y-2">
-              <li><Link to="/" className="hover:text-white">Company</Link></li>
-              <li><Link to="/" className="hover:text-white">Careers</Link></li>
-              <li><Link to="/" className="hover:text-white">Press</Link></li>
-              <li><Link to="/" className="hover:text-white">Contact</Link></li>
+              <li>
+                <Link to="/" className="hover:text-white">
+                  Company
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className="hover:text-white">
+                  Careers
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className="hover:text-white">
+                  Press
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className="hover:text-white">
+                  Contact
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
             <h3 className="font-bold text-lg mb-4">Services</h3>
             <ul className="space-y-2">
-              <li><Link to="/" className="hover:text-white">Ocean Freight</Link></li>
-              <li><Link to="/" className="hover:text-white">Air Freight</Link></li>
-              <li><Link to="/" className="hover:text-white">Land Transport</Link></li>
-              <li><Link to="/" className="hover:text-white">Customs Clearance</Link></li>
+              <li>
+                <Link to="/" className="hover:text-white">
+                  Ocean Freight
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className="hover:text-white">
+                  Air Freight
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className="hover:text-white">
+                  Land Transport
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className="hover:text-white">
+                  Customs Clearance
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
             <h3 className="font-bold text-lg mb-4">Tools</h3>
             <ul className="space-y-2">
-              <li><Link to="/" className="hover:text-white">Rate Calculator</Link></li>
-              <li><Link to="/" className="hover:text-white">Tracking</Link></li>
-              <li><Link to="/" className="hover:text-white">Schedules</Link></li>
-              <li><Link to="/" className="hover:text-white">Documentation</Link></li>
+              <li>
+                <Link to="/" className="hover:text-white">
+                  Rate Calculator
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className="hover:text-white">
+                  Tracking
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className="hover:text-white">
+                  Schedules
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className="hover:text-white">
+                  Documentation
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
@@ -56,16 +104,24 @@ const Footer = () => {
         </div>
         <div className="border-t border-gray-800 mt-8 pt-8 text-sm text-gray-400">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p>&copy; {new Date().getFullYear()} ShipAssure. All rights reserved.</p>
+            <p>
+              &copy; {new Date().getFullYear()} ShipAssure. All rights reserved.
+            </p>
             <div className="flex space-x-4 mt-4 md:mt-0">
-              <Link to="/" className="hover:text-white">Privacy Policy</Link>
-              <Link to="/" className="hover:text-white">Terms of Service</Link>
-              <Link to="/" className="hover:text-white">Cookie Policy</Link>
+              <Link to="/" className="hover:text-white">
+                Privacy Policy
+              </Link>
+              <Link to="/" className="hover:text-white">
+                Terms of Service
+              </Link>
+              <Link to="/" className="hover:text-white">
+                Cookie Policy
+              </Link>
             </div>
           </div>
         </div>
       </div>
     </footer>
-  )
-}
- export default Footer
+  );
+};
+export default Footer;
