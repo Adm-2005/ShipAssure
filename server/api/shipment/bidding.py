@@ -9,6 +9,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 # internal imports
 from api import mongo
 from api.shipment import ship_bp
+from api.services import predict_top_bid
 from api.db_models.user_models import Carrier
 from api.utils.object_id import PydanticObjectId
 from api.db_models.shipment_models import Shipment, Bid
@@ -147,4 +148,32 @@ def delete_bid(b_id: str) -> Tuple[Dict[str, Any], int]:
 
     except Exception as e:
         current_app.logger.error('Error while deleting bid: %s', e)
+        raise e
+    
+@ship_bp.route('/<string:sh_id>/top-bids', methods=['GET'])
+@jwt_required()
+def get_top_bid(sh_id: str):
+    """Endpoint to get the top bid."""
+    bids = mongo.db.bids
+    try:
+        if not ObjectId.is_valid(sh_id):
+            abort(400, 'Invalid object id.')
+
+        bids_list = bids.find({ 'shipment_id': ObjectId(sh_id) })
+        if not bids_list:
+            abort(404, 'No bids found.')
+
+        top_bid = predict_top_bid(bids_list, current_app.config.get('MODEL_DIR'))
+
+        print(top_bid)
+
+        bid = Bid(**top_bid)
+
+        return jsonify({
+            'message': 'Top bid fetched successfully.',
+            'data': bid.to_json()
+        }), 200
+
+    except Exception as e: 
+        current_app.logger.error('Error while getting top bid: %s', e)
         raise e
