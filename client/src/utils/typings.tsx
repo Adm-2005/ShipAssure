@@ -24,9 +24,9 @@ export interface CustomShipmentFormData {
   destination_code: string;
   cargo_load: number;
 };
-
 export interface FormSectionProps {
   formData: CustomShipmentFormData;
-  setFormData: React.Dispatch<CustomShipmentFormData>;
-  setError: React.Dispatch<string>;
+  setFormData: React.Dispatch<React.SetStateAction<CustomShipmentFormData>>;
+  handleSubmit: (e: React.FormEvent) => void;
+  error: string;
 };

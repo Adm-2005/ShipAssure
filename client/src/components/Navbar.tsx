@@ -43,7 +43,7 @@ const Navbar = () => {
       </div>
       <div className="flex items-center space-x-6">
         <button
-          onClick={() => handleScroll('home')}
+          onClick={() => navigate('/')}
           className="text-gray-600 hover:text-gray-900"
         >
           Home

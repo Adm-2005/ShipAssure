@@ -43,14 +43,4 @@
     <circle cx="1200" cy="350" r="3" />
   </g>
 
-  <!-- Global Accent (Circle) -->
-  <circle
-    cx="1200"
-    cy="200"
-    r="150"
-    fill="none"
-    stroke="#63b3ed"
-    stroke-width="2"
-    opacity="0.4"
-  />
 </svg>

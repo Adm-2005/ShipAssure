@@ -1,56 +1,18 @@
 import { FormSectionProps } from '../../utils/typings';
 
-
-
 const FormSection: React.FC<FormSectionProps> = ({
   formData,
   setFormData,
-  setError,
+  handleSubmit,
+  error,
 }) => {
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (formData.cargo_load < 1) {
-      setError('Cargo load must be at least 1.');
-      return;
-    }
-
-    try {
-      setError('');
-      const response = await fetch('/user/update', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      console.log('Response from server:', data);
-    } catch (error) {
-      console.error('Error updating user details:', error);
-    }
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    if (name === 'cargo_load') {
-      const parsedValue = parseFloat(value);
-      setFormData({
-        ...formData,
-        [name]: isNaN(parsedValue) ? 0 : parsedValue,
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === 'cargo_load' ? parseFloat(value) || 0 : value,
+    }));
   };
 
   return (
@@ -59,7 +21,9 @@ const FormSection: React.FC<FormSectionProps> = ({
         <h2 className="text-2xl lg:text-3xl text-[#0E76FD] font-bold">Create Shipment</h2>
         <p className="text-md">Ship your products with a single click.</p>
       </div>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={(e) => {
+        handleSubmit(e)
+      }} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <label htmlFor="origin_code" className="text-md text-[#0E76FD] font-semibold">
             Origin Postal Code*
@@ -94,12 +58,14 @@ const FormSection: React.FC<FormSectionProps> = ({
             type="number"
             id="cargo_load"
             name="cargo_load"
-            value={formData.cargo_load.toFixed(2)}
+            value={formData.cargo_load}
             onChange={handleChange}
             className="p-3 rounded-md focus:ring-2 ring-[#0E76FD] focus:outline-none"
-            step="any" 
+            step="any"
           />
         </div>
+
+        {error && <span className="text-red-700">{error}</span>}
 
         <button
           type="submit"

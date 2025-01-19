@@ -100,7 +100,7 @@ def get_all_shipments_of_a_shipper(sh_id: str) -> Tuple[Dict[str, Any]]:
         current_app.logger.error('Error while fetching all shipments of the shipper %s: %s', sh_id, e)
         raise e
     
-@ship_bp.route('/shipper/<string:sh_id>/active', methods=['GET'])
+@ship_bp.route('/shipper/<string:sh_id>/<string:status>', methods=['GET'])
 @jwt_required()
 def get_status_based_shipments_of_a_shipper(sh_id: str, status: Status) -> Tuple[Dict[str, Any]]:
     """
@@ -173,32 +173,24 @@ def create_shipment() -> Tuple[Dict[str, Any], int]:
         if not data or not all(field in data for field in req_fields):
             abort(400, 'Missing required fields.')
 
-        # validating mode list
-        mode = data.get('mode')
-        if not isinstance(mode, list) or not all(isinstance(m, Mode) for m in mode):
-            abort(400, 'Invalid transportation mode.')
+        # Extracting origin and destination codes
+        origin_code = data.get('origin_code').strip()
+        destination_code = data.get('destination_code').strip()
+        
+        # Fetch origin and destination details
+        origin = shippers.find_one({"postal_code": origin_code})
+        destination = shippers.find_one({"postal_code": destination_code})
 
-        # creating origin and destination dictionaries
-        origin = {
-            'postal_code': data.get('origin_code').strip(),
-            'city': data.get('origin_city').strip(),
-            'country': data.get('origin_country').strip()
-        }
+        if not origin or not destination:
+            abort(404, 'Origin or destination not found.')
 
-        destination = {
-            'postal_code': data.get('destination_code').strip(),
-            'city': data.get('destination_city').strip(),
-            'country': data.get('destination_country').strip()
-        }
- 
+        # Calculate distance between the locations
         distance = calculate_distance(
-            origin['postal_code'], 
-            origin['country'], 
-            destination['postal_code'], 
-            destination['country']
+            origin_code,
+            destination_code
         )
 
-        # fetching the current shipper
+        # Fetching the current shipper
         user_id = get_jwt_identity()
 
         res = shippers.find_one({ 'user_id': ObjectId(user_id) })
@@ -207,42 +199,40 @@ def create_shipment() -> Tuple[Dict[str, Any], int]:
 
         shipper = Shipper(**res)
 
-        # initializing and inserting shipment into database
+        # Initializing and inserting shipment into database
         shipment_data = {
-            'shipper_id': PydanticObjectId(str(shipper.id)),
-            'origin': origin,
-            'destination': destination,
+            'shipper_id': str(shipper.id),
+            'origin_code': origin_code,
+            'destination_code': destination_code,
             'distance': distance,
-            'mode': mode,
             'status': 'waiting',
             'cargo_load': data.get('cargo_load').strip(),
-            'cargo_type': data.get('cargo_type').strip(),
-            'updated_at': datetime.datetime.now(tz = datetime.timezone.utc)
+            'created_at': datetime.datetime.now(tz=datetime.timezone.utc),
+            'updated_at': datetime.datetime.now(tz=datetime.timezone.utc)
         }
 
         new_shipment = Shipment(**shipment_data)
         shipment_id = shipments.insert_one(new_shipment.to_bson()).inserted_id
-        new_shipment.id = PydanticObjectId(str(shipment_id))
+        new_shipment.id = str(shipment_id)
 
-        # adding new shipment's id to sent_shipments
         shipper.sent_shipments.append(shipment_id)
-        _ = shippers.find_one_and_update({ 
-            '_id': ObjectId(shipper.id) }, 
-            { '$set': shipper }, 
-            return_document = ReturnDocument.AFTER
+        shippers.find_one_and_update(
+            { '_id': ObjectId(shipper.id) },
+            { '$set': shipper.to_bson() },
+            return_document=ReturnDocument.AFTER
         )
 
         return jsonify({
             'message': 'Shipment created successfully.',
             'data': {
-                'shipment': new_shipment.to_json(),
-                'shipper': shipper.to_json()
+                'shipment': new_shipment.to_bson(),
+                'shipper': shipper.to_bson()
             }
         }), 201
 
     except Exception as e:
         current_app.logger.error('Error while creating shipment: %s', e)
-        raise e
+        abort(500, 'Internal server error.')
     
 @ship_bp.route('/<string:s_id>', methods=['PUT'])
 @jwt_required()

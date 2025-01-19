@@ -13,7 +13,7 @@ mongo = PyMongo()
 jwt = JWTManager()
 
 def create_app(config_class = Config):
-    """
+    '''
     Factory function to create flask app.
 
     Args
@@ -21,13 +21,14 @@ def create_app(config_class = Config):
 
     Returns
         app: Flask app
-    """
+    '''
     dictConfig(config_class.LOGGING_CONFIG)
     app = Flask(__name__)
     app.config.from_object(config_class)
     CORS(
         app, 
-        resources={r"/*": {"origins": "http://localhost:5173"}},
+        origins=['http://localhost:5173'],
+        allow_headers=['Authorization', 'Content-Type'],
         supports_credentials = True
     )
     

@@ -85,13 +85,11 @@ class Shipment(Serialization, MutableId):
     shipper_id: Optional[PydanticObjectId] = Field(default = None)
     carrier_id: Optional[PydanticObjectId] = Field(default = None)
     status: Status = Field(default = None)
-    modes: List[Mode] = Field(default_factory = list)
     pickup_point: Optional[str] = Field(default = None)
-    origin: Dict[str, Any] = Field(default_factory = dict) # includes postal code, city and country
-    destination: Dict[str, Any] = Field(default_factory = dict) # includes postal code, city and country
+    origin_code: Optional[str] = Field(default = None)
+    destination_code: Optional[str] = Field(default = None)
     distance: float = Field(default = None)
     cargo_load: float = Field(default = None)
-    cargo_type: str = Field(default = None)
     price: Optional[float] = Field(default = None)
     current_location: Optional[PydanticObjectId] = Field(default = None) # id of an object of 'Location' model
     vehicle: Optional[PydanticObjectId] = Field(default = None) # id of an object of 'Vehicle' model
