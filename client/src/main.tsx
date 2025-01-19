@@ -23,6 +23,7 @@ const config = getDefaultConfig({
 const queryClient = new QueryClient();
 
 const Main = () => {
+  
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>

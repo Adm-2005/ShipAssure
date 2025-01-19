@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import FormSection from '../sections/Shipment/FormSection';
 import Footer from '../components/Footer';
+import MobileNavbar from '../components/mobileNav';
 import { CustomShipmentFormData } from '../utils/typings';
 
 const ShipmentCreation = () => {
@@ -12,10 +13,23 @@ const ShipmentCreation = () => {
   });
 
   const [error, setError] = useState<string>('48');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 700);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
     <div className='flex flex-col justify-between min-h-screen'>
-        <Navbar />
+                {isMobile ? <MobileNavbar /> : <Navbar />}
 
         <FormSection
             formData={formData}
