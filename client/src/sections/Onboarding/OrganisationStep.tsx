@@ -9,19 +9,18 @@ import {
   SelectValue,
 } from '../../components/ui/Select';
 
+type OrganizationDetails = {
+  name: string;
+  type: string;
+  address: string;
+  modes?: string[];
+  industry?: string;
+};
+
 type OrganizationDetailsStepProps = {
-  organizationDetails: {
-    name: string;
-    employeeCount: string;
-    type: string;
-    yearsInBusiness: string;
-  };
-  setOrganizationDetails: (details: {
-    name: string;
-    employeeCount: string;
-    type: string;
-    yearsInBusiness: string;
-  }) => void;
+  organizationDetails: OrganizationDetails;
+  setOrganizationDetails: (details: OrganizationDetails) => void;
+  individualType: 'shipper' | 'carrier';
   onNext: () => void;
   onBack: () => void;
 };
@@ -29,21 +28,36 @@ type OrganizationDetailsStepProps = {
 export function OrganizationDetailsStep({
   organizationDetails,
   setOrganizationDetails,
+  individualType,
   onNext,
   onBack,
 }: OrganizationDetailsStepProps) {
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | string[]) => {
     setOrganizationDetails({ ...organizationDetails, [field]: value });
   };
 
-  const isFormValid = () => {
-    return (
-      organizationDetails.name &&
-      organizationDetails.employeeCount &&
-      organizationDetails.type &&
-      organizationDetails.yearsInBusiness
-    );
+  const handleModeToggle = (mode: string) => {
+    const currentModes = organizationDetails.modes || [];
+    const newModes = currentModes.includes(mode)
+      ? currentModes.filter(m => m !== mode)
+      : [...currentModes, mode];
+    handleChange('modes', newModes);
   };
+
+  const isFormValid = () => {
+    const baseFieldsValid = 
+      organizationDetails.name &&
+      organizationDetails.type &&
+      organizationDetails.address;
+
+    if (individualType === 'shipper') {
+      return baseFieldsValid && organizationDetails.industry;
+    } else {
+      return baseFieldsValid && (organizationDetails.modes?.length ?? 0) > 0;
+    }
+  };
+
+  const transportModes = ['air', 'water', 'railway', 'road'];
 
   return (
     <div className="space-y-4">
@@ -52,24 +66,14 @@ export function OrganizationDetailsStep({
         <div>
           <Label htmlFor="org-name">Organization Name</Label>
           <Input
-            id="org-name"
+            id="org_name"
             value={organizationDetails.name}
             onChange={(e) => handleChange('name', e.target.value)}
             placeholder="Enter your organization name"
           />
         </div>
         <div>
-          <Label htmlFor="employee-count">Number of Employees</Label>
-          <Input
-            id="employee-count"
-            value={organizationDetails.employeeCount}
-            onChange={(e) => handleChange('employeeCount', e.target.value)}
-            placeholder="Enter the number of employees"
-            type="number"
-          />
-        </div>
-        <div>
-          <Label htmlFor="org-type">Organization Type</Label>
+          <Label htmlFor="org_type">Organization Type</Label>
           <Select
             value={organizationDetails.type}
             onValueChange={(value) => handleChange('type', value)}
@@ -78,22 +82,57 @@ export function OrganizationDetailsStep({
               <SelectValue placeholder="Select organization type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="shipper">Small business</SelectItem>
-              <SelectItem value="carrier">Large business</SelectItem>
+              <SelectItem value="individual">Individual</SelectItem>
+              <SelectItem value="small_business">Small business</SelectItem>
+              <SelectItem value="large_business">Large business</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div>
-          <Label htmlFor="years-in-business">Years in Business</Label>
+          <Label htmlFor="address">Address</Label>
           <Input
-            id="years-in-business"
-            value={organizationDetails.yearsInBusiness}
-            onChange={(e) => handleChange('yearsInBusiness', e.target.value)}
-            placeholder="Enter years in business"
-            type="number"
+            id="address"
+            value={organizationDetails.address}
+            onChange={(e) => handleChange('address', e.target.value)}
+            placeholder="Enter your address"
           />
         </div>
+
+        {individualType === 'shipper' && (
+          <div>
+            <Label htmlFor="industry">Industry</Label>
+            <Input
+              id="industry"
+              value={organizationDetails.industry || ''}
+              onChange={(e) => handleChange('industry', e.target.value)}
+              placeholder="Enter your industry"
+            />
+          </div>
+        )}
+
+        {individualType === 'carrier' && (
+          <div className="space-y-2">
+            <Label>Transport Modes</Label>
+            <div className="space-y-2">
+            {transportModes.map((mode) => (
+              <div key={mode} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id={mode}
+                  checked={(organizationDetails.modes || []).includes(mode)}
+                  onChange={() => handleModeToggle(mode)}
+                />
+                <Label htmlFor={mode} className="capitalize">
+                  {mode}
+                </Label>
+              </div>
+
+              ))}
+            </div>
+          </div>
+        )}
       </div>
+
       <div className="flex space-x-4 mt-4">
         <Button onClick={onBack} variant="outline" className="w-full">
           Back

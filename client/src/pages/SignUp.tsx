@@ -1,21 +1,22 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import MobileNavbar from '../components/mobileNav';
 import { Eye, EyeOff } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import axios from 'axios';
 import { CustomSignUpData } from '../utils/typings';
-import { useUser } from '../context/UserContext'; 
+import { useUser } from '../context/UserContext';
 
 export default function SignUp() {
-  const { setUser } = useUser();  
+  const { setUser } = useUser();
   const [formData, setFormData] = useState<CustomSignUpData>({
     first_name: '',
     last_name: '',
     email: '',
     role: 'shipper',
     country: '',
-    password: ''
+    password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string>('');
@@ -25,22 +26,28 @@ export default function SignUp() {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/auth/register`, formData, {
-        withCredentials: true, 
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/users/auth/register`,
+        formData,
+        { withCredentials: true }
+      );
 
       if (response.status === 201) {
-        const user = response.data.data;  
-        setUser(user); 
-        navigate('/onboarding-quiz');  
+        const userData = response.data.data; // Assuming `data` holds user details
+        setUser({
+          user: userData,
+          isLoggedIn: true,
+          setUser, // Ensure `setUser` remains accessible for future updates
+        });
+        navigate('/onboarding-quiz');
       }
     } catch (error: any) {
       const { message, error: errorDetails } = error.response?.data || {};
       if (message) {
-        setError(message); 
+        setError(message);
       }
       if (errorDetails) {
-        console.error('Error details:', errorDetails); 
+        console.error('Error details:', errorDetails);
       }
     }
   };
@@ -49,7 +56,7 @@ export default function SignUp() {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -57,9 +64,23 @@ export default function SignUp() {
     setShowPassword(!showPassword);
   };
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 700);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
     <div className='flex flex-col justify-between min-h-screen'>
-      <Navbar />
+      {isMobile ? <MobileNavbar /> : <Navbar />}
 
       <section className='flex flex-col gap-2 max-w-md lg:w-[500px] p-5 mx-auto my-[40px] rounded-md bg-[#DBEAFE]'>
         <div className='flex flex-col items-center gap-1 mx-auto'>
@@ -68,7 +89,7 @@ export default function SignUp() {
         </div>
         <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
           {error && <div className='text-red-500 text-sm'>{error}</div>}
-          
+
           <div className='flex gap-4'>
             <div className='flex flex-col gap-1 w-full'>
               <label htmlFor='first_name' className='text-md text-[#0E76FD] font-semibold'>
@@ -161,7 +182,7 @@ export default function SignUp() {
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                 setFormData({
                   ...formData,
-                  role: e.target.value as 'shipper' | 'carrier', 
+                  role: e.target.value as 'shipper' | 'carrier',
                 })
               }
               className='p-3 rounded-md focus:ring-2 ring-[#0E76FD] focus:outline-none w-full border-2 border-[#0E76FD]'
@@ -169,7 +190,6 @@ export default function SignUp() {
               <option value='shipper'>Shipper</option>
               <option value='carrier'>Carrier</option>
             </select>
-
           </div>
 
           <div className='text-center mt-1'>

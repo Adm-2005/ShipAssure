@@ -1,45 +1,73 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { CustomSignInData } from '../utils/typings';
+import MobileNavbar from '../components/mobileNav';
 import { useUser } from '../context/UserContext.tsx';
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<CustomSignInData>({
     email: '',
     password: '',
   });
 
-  const { setUser } = useUser();
+  const { user, setUser } = useUser();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
+  const validateForm = () => {
+    if (!formData.email || !formData.password) {
+      setError('Please fill in all fields.');
+      return false;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setError('Please enter a valid email address.');
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    if (!validateForm()) return;
+  
+    setLoading(true);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/login`, formData, {
-        withCredentials: true, 
-      });
-
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/users/auth/login`,
+        formData,
+        {
+          withCredentials: true,
+        }
+      );
+  
       if (response.status === 200) {
         setUser(response.data.data);
         navigate('/');
       }
     } catch (error: any) {
-      const { message, error: errorDetails } = error.response?.data || {};
+      const { message } = error.response?.data || {};
       if (message) {
         setError(message);
+      } else {
+        setError('An error occurred. Please try again.');
       }
-      if (errorDetails) {
-        console.error('Error details:', errorDetails);
-      }
+    } finally {
+      setLoading(false);
     }
   };
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -47,15 +75,30 @@ const SignIn = () => {
       ...formData,
       [name]: value,
     });
+    setError(''); // Clear error on input change
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 700);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen justify-between">
-      <Navbar />
+      {isMobile ? <MobileNavbar /> : <Navbar />}
 
       <section className="flex flex-col gap-7 max-w-md lg:w-[500px] p-6 mx-auto my-[40px] rounded-md bg-[#DBEAFE]">
         <div className="flex flex-col items-center gap-1 mx-auto">
@@ -64,6 +107,7 @@ const SignIn = () => {
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {error && <div className="text-red-500 text-sm">{error}</div>}
+
           <div className="flex flex-col gap-1">
             <label htmlFor="email" className="text-md text-[#0E76FD] font-semibold">
               Email Address*
@@ -75,6 +119,7 @@ const SignIn = () => {
               value={formData.email}
               onChange={handleChange}
               className="p-3 rounded-md focus:ring-2 ring-[#0E76FD] focus:outline-none"
+              aria-label="Email Address"
             />
           </div>
 
@@ -90,11 +135,13 @@ const SignIn = () => {
                 value={formData.password}
                 onChange={handleChange}
                 className="p-3 rounded-md focus:ring-2 ring-[#0E76FD] focus:outline-none w-full"
+                aria-label="Password"
               />
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff /> : <Eye />}
               </button>
@@ -103,9 +150,12 @@ const SignIn = () => {
 
           <button
             type="submit"
-            className="px-3 py-2 mt-4 rounded-md bg-[#0E76FD] hover:bg-[#3E76FD] w-[150px] lg:w-[200px] mx-auto text-white"
+            disabled={loading}
+            className={`px-3 py-2 mt-4 rounded-md ${
+              loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#0E76FD] hover:bg-[#3E76FD]'
+            } w-[150px] lg:w-[200px] mx-auto text-white`}
           >
-            Sign In
+            {loading ? 'Signing In...' : 'Sign In'}
           </button>
 
           <div className="text-center mt-4">

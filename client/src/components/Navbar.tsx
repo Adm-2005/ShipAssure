@@ -1,7 +1,11 @@
-import { Link } from 'react-router-dom';
-import { Button } from '../components/ui/Button';
+import { useNavigate } from 'react-router-dom';
+import { useUser } from '../context/UserContext';
+import axios from 'axios';
 
 const Navbar = () => {
+  const { isLoggedIn, logout } = useUser();
+  const navigate = useNavigate();
+
   const handleScroll = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -9,49 +13,65 @@ const Navbar = () => {
     }
   };
 
-  return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white">
-      <div className="container flex h-16 items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="flex items-center font-bold text-2xl text-blue-500 space-x-2">
-          ShipAssure
-        </Link>
+  const handleBtnClick = async () => {
+    if (isLoggedIn) {
+      try {
+        const response = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/users/auth/logout`,
+          {},
+          { withCredentials: true }
+        );
 
-        {/* Navigation Links */}
-        <nav className="flex items-center space-x-8">
-          <button
-            className="text-gray-800 hover:text-blue-600 transition-colors"
-            onClick={() => handleScroll('home')}
-          >
-            Home
-          </button>
-          <Link
-            to="/shipments"
-            className="text-gray-800 hover:text-blue-600 transition-colors"
-          >
-            Shipments
-          </Link>
-          <button
-            className="text-gray-800 hover:text-blue-600 transition-colors"
-            onClick={() => handleScroll('features')}
-          >
-            About
-          </button>
-          <button
-            className="text-gray-800 hover:text-blue-600 transition-colors"
-            onClick={() => handleScroll('footer')}
-          >
-            Contact
-          </button>
-          {/* Sign-In Button */}
-          <Link to="/sign-in">
-            <Button variant="default" size="sm">
-              SIGN IN
-            </Button>
-          </Link>
-        </nav>
+        if (response.status === 200) {
+          logout();
+          navigate('/');
+        }
+      } catch (error) {
+        console.error('Logout failed:', error);
+      }
+    } else {
+      navigate('/sign-in');
+    }
+  };
+
+  console.log('Current login state:', isLoggedIn);
+
+  return (
+    <nav className="flex items-center justify-between p-4 bg-white shadow-sm">
+      <div className="text-xl font-bold">
+        ShipAssure
       </div>
-    </header>
+      <div className="flex items-center space-x-6">
+        <button
+          onClick={() => handleScroll('home')}
+          className="text-gray-600 hover:text-gray-900"
+        >
+          Home
+        </button>
+
+        <button
+          onClick={() => handleScroll('features')}
+          className="text-gray-600 hover:text-gray-900"
+        >
+          About
+        </button>
+
+        <button
+          onClick={() => handleScroll('footer')}
+          className="text-gray-600 hover:text-gray-900"
+        >
+          Contact
+        </button>
+        
+        <button 
+          type="button" 
+          onClick={handleBtnClick}
+          className="px-3 py-2 bg-[#0E76FD] hover:bg-[#3E76FD] text-white rounded-md"
+        >
+          {isLoggedIn ? 'Sign Out' : 'Sign In'}
+        </button>
+      </div>
+    </nav>
   );
 };
 
