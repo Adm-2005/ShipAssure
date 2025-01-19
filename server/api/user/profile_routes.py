@@ -75,7 +75,6 @@ def update_user() -> Tuple[Dict[str, Any], int]:
         if not updated_user:
             abort(404, 'User not found.')
 
-        updated_user['_id'] = PydanticObjectId(current_user_id)
         user = User(**updated_user)
 
         return jsonify({

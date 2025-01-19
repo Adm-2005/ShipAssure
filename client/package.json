@@ -21,6 +21,7 @@
     "@rainbow-me/rainbowkit": "^2.2.2",
     "@tailwindcss/typography": "^0.5.15",
     "@tanstack/react-query": "^5.64.1",
+    "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "client": "file:",
     "date-fns": "^4.1.0",
