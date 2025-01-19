@@ -7,8 +7,6 @@ import { polygon, polygonAmoy } from 'wagmi/chains';
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
 import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
@@ -35,7 +33,6 @@ const Main = () => {
         <RainbowKitProvider>
           <Router>
             <div className="flex flex-col min-h-screen">
-              <Navbar />
               <main className="flex-grow">
                 <Routes>
                   <Route path="/" element={<Home />} />
@@ -48,7 +45,6 @@ const Main = () => {
                   />
                 </Routes>
               </main>
-              <Footer />
             </div>
           </Router>
         </RainbowKitProvider>

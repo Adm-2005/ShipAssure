@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
-import WalletConnection from './WalletConnection';
 
 const Navbar = () => {
   const handleScroll = (id: string) => {
@@ -14,7 +13,7 @@ const Navbar = () => {
     <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center font-bold space-x-2">
+        <Link to="/" className="flex items-center font-bold text-2xl text-blue-500 space-x-2">
           ShipAssure
         </Link>
 
@@ -45,12 +44,11 @@ const Navbar = () => {
             Contact
           </button>
           {/* Sign-In Button */}
-          <Link to="/pages/signin">
+          <Link to="/sign-in">
             <Button variant="default" size="sm">
               SIGN IN
             </Button>
           </Link>
-          <WalletConnection />
         </nav>
       </div>
     </header>

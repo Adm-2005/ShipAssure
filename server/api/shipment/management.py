@@ -166,14 +166,8 @@ def create_shipment() -> Tuple[Dict[str, Any], int]:
         data = request.get_json()
         req_fields = [
             'origin_code', 
-            'origin_city', 
-            'origin_country', 
             'destination_code', 
-            'destination_city', 
-            'destination_country', 
-            'mode', 
-            'cargo_load', 
-            'cargo_type' 
+            'cargo_load'
         ]
 
         if not data or not all(field in data for field in req_fields):
