@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -14,7 +15,9 @@ type OrganizationDetails = {
 
 const OnboardingFlow = () => {
   const navigate = useNavigate();
-  const { user, isLoggedIn } = useUser();
+  const { user, isLoggedIn, setUser } = useUser();
+  const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const [organizationDetails, setOrganizationDetails] = useState<OrganizationDetails>({
     org_name: '',
     type: 'small business',
@@ -22,7 +25,6 @@ const OnboardingFlow = () => {
     modes: [],
     industry: '',
   });
-  const [loading, setLoading] = useState<boolean>(false);
 
   const handleModeToggle = (mode: string) => {
     const updatedModes = organizationDetails.modes?.includes(mode)
@@ -31,15 +33,24 @@ const OnboardingFlow = () => {
     setOrganizationDetails({ ...organizationDetails, modes: updatedModes });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate a submission API call
-    setTimeout(() => {
-      console.log('Submitted data:', organizationDetails);
-      setLoading(false);
-      navigate('/dashboard'); // Redirect to a dashboard or relevant page after submission
-    }, 1000);
+    
+    try {
+      const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/user/update`, 
+        organizationDetails, {
+        withCredentials: true
+      })
+
+      if(response.status === 200) {
+        setUser(response.data);
+        navigate('/dashboard');
+      }
+    } catch(error: any) {
+      setError(error.message);
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -49,6 +60,7 @@ const OnboardingFlow = () => {
   }, [isLoggedIn, navigate]);
 
   const transportModes = ['Air', 'Water', 'Railway', 'Road'];
+  
 
   return (
     <div className="flex flex-col justify-between min-h-screen bg-gray-50">

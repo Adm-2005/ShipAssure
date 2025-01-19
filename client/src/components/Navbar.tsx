@@ -50,6 +50,13 @@ const Navbar = () => {
         </button>
 
         <button
+          onClick={() => navigate('/dashboard')}
+          className="text-gray-600 hover:text-gray-900"
+        >
+          Dashboard
+        </button>
+
+        <button
           onClick={() => handleScroll('features')}
           className="text-gray-600 hover:text-gray-900"
         >
