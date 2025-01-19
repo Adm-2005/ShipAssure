@@ -27,11 +27,7 @@ def create_app(config_class = Config):
     app.config.from_object(config_class)
     CORS(
         app, 
-        resources = {
-            r'/*': {
-                'origins': app.config.get('CLIENT_URL')
-            }
-        },
+        resources={r"/*": {"origins": "http://localhost:5173"}},
         supports_credentials = True
     )
     

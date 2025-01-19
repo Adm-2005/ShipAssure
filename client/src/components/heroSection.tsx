@@ -1,17 +1,24 @@
 import { useState } from 'react';
 import Hero2 from '../assets/hero2.svg'; // Update the path to the actual location of your Hero image
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../context/UserContext';
 import { MapPin, ArrowRight } from 'lucide-react';
-
+// /user/update  -> PUT
 const HeroSection = () => {
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const navigate = useNavigate();
+  const { isLoggedIn } = useUser();
 
-  const handleSubmit = (e:any) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     if (from.trim() && to.trim()) {
-      navigate('/CreateShipmentForm');
+      if (isLoggedIn) {
+        navigate('/create-shipment');
+      } else {
+        alert('Please log in to create a shipment.');
+        navigate('/sign-in');
+      }
     } else {
       alert("Please fill in both the 'From' and 'To' fields.");
     }
@@ -21,7 +28,7 @@ const HeroSection = () => {
     <section className="relative min-h-[80vh] px-8 py-16 bg-gradient-to-r from-gray-50 via-white to-gray-100">
       {/* Background Image */}
       <img src={Hero2} alt="Hero Background" className="absolute inset-0 w-full h-full object-cover opacity-70" />
-      
+
       {/* Subtle overlay pattern */}
       <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] opacity-90" />
 
@@ -87,12 +94,11 @@ const HeroSection = () => {
               type="submit"
               className="w-full bg-blue-600 text-white py-4 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out transform hover:-translate-y-1 flex items-center justify-center gap-2"
             >
-              Check Availability
+              Create Shipment
               <ArrowRight className="w-5 h-5" />
             </button>
           </form>
 
-          {/* Trust Indicators */}
           <div className="flex justify-center gap-6 mt-6 text-sm text-gray-600">
             <div className="flex items-center space-x-2">
               <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
@@ -110,4 +116,3 @@ const HeroSection = () => {
 };
 
 export default HeroSection;
-//    style={{backgroundImage: `url(${Hero})`, backgroundSize: 'cover', backgroundPosition: 'center'}}

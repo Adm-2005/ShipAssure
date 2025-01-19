@@ -1,11 +1,13 @@
 import { FormSectionProps } from '../../utils/typings';
 
+
+
 const FormSection: React.FC<FormSectionProps> = ({
   formData,
   setFormData,
   setError,
 }) => {
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (formData.cargo_load < 1) {
@@ -13,9 +15,25 @@ const FormSection: React.FC<FormSectionProps> = ({
       return;
     }
 
-    setError('');
-    console.log('Form submitted successfully:', formData);
-    alert('Shipment created successfully!');
+    try {
+      setError('');
+      const response = await fetch('/user/update', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('Response from server:', data);
+    } catch (error) {
+      console.error('Error updating user details:', error);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
