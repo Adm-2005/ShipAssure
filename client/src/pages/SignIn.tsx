@@ -1,81 +1,125 @@
-'use client';
-
-import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { Label } from '../components/ui/Label';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import { CustomSignInData } from '../utils/typings';
+import { useUser } from '../context/UserContext.tsx';
 
 const SignIn = () => {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const [formData, setFormData] = useState<CustomSignInData>({
+    email: '',
+    password: '',
+  });
+
+  const { setUser } = useUser();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/login`, formData, {
+        withCredentials: true, 
+      });
+
+      if (response.status === 200) {
+        setUser(response.data.data);
+        navigate('/');
+      }
+    } catch (error: any) {
+      const { message, error: errorDetails } = error.response?.data || {};
+      if (message) {
+        setError(message);
+      }
+      if (errorDetails) {
+        console.error('Error details:', errorDetails);
+      }
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   return (
-    <div className="flex items-center justify-center min-h-screen py-8">
-      <div className="w-full max-w-md p-6 bg-white border rounded-lg shadow-md">
-        <div className="space-y-6">
-          <div className="space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">Welcome!</h1>
-            <p className="text-sm text-muted-foreground">
-              We are glad to see you
+    <div className="flex flex-col min-h-screen justify-between">
+      <Navbar />
+
+      <section className="flex flex-col gap-7 max-w-md lg:w-[500px] p-6 mx-auto my-[40px] rounded-md bg-[#DBEAFE]">
+        <div className="flex flex-col items-center gap-1 mx-auto">
+          <h2 className="text-2xl lg:text-3xl text-[#0E76FD] font-bold">Sign In</h2>
+          <p className="text-md">Access your account to continue.</p>
+        </div>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {error && <div className="text-red-500 text-sm">{error}</div>}
+          <div className="flex flex-col gap-1">
+            <label htmlFor="email" className="text-md text-[#0E76FD] font-semibold">
+              Email Address*
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="p-3 rounded-md focus:ring-2 ring-[#0E76FD] focus:outline-none"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="password" className="text-md text-[#0E76FD] font-semibold">
+              Password*
+            </label>
+            <div className="relative">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                value={formData.password}
+                onChange={handleChange}
+                className="p-3 rounded-md focus:ring-2 ring-[#0E76FD] focus:outline-none w-full"
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2"
+              >
+                {showPassword ? <EyeOff /> : <Eye />}
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="px-3 py-2 mt-4 rounded-md bg-[#0E76FD] hover:bg-[#3E76FD] w-[150px] lg:w-[200px] mx-auto text-white"
+          >
+            Sign In
+          </button>
+
+          <div className="text-center mt-4">
+            <p className="text-md">
+              Don't have an account?{' '}
+              <Link to="/sign-up" className="text-[#0E76FD]">
+                Sign Up
+              </Link>
             </p>
           </div>
-          <form className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">LOGIN OR EMAIL</Label>
-              <Input
-                id="email"
-                placeholder="Enter your email"
-                type="email"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">PASSWORD</Label>
-                <Link
-                  to="/auth/forgot-password"
-                  className="text-sm text-blue-600 hover:text-blue-500"
-                >
-                  FORGOT PASSWORD?
-                </Link>
-              </div>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-muted-foreground" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </Button>
-              </div>
-            </div>
-            <Button type="submit" className="w-full">
-              Sign in
-            </Button>
-          </form>
-          <div className="text-center text-sm">
-            Don't have an account yet?{' '}
-            <Link
-              to="/pages/signup"
-              className="text-blue-600 hover:text-blue-500"
-            >
-              Sign up
-            </Link>
-          </div>
-        </div>
-      </div>
+        </form>
+      </section>
+
+      <Footer />
     </div>
   );
 };

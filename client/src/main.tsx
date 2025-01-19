@@ -1,17 +1,14 @@
 import './index.css';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
 import { WagmiProvider, http } from 'wagmi';
 import { polygon, polygonAmoy } from 'wagmi/chains';
+import { router } from './utils/config';
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import '@rainbow-me/rainbowkit/styles.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Home from './pages/Home';
-import SignIn from './pages/SignIn';
-import SignUp from './pages/SignUp';
-import Onboarding from './pages/Onboarding';
-import CreateShipmentForm from './pages/CreateShipmentForm';
+import { UserProvider } from './context/UserContext';
+import '@rainbow-me/rainbowkit/styles.css';
 
 const config = getDefaultConfig({
   appName: 'ShipAssure',
@@ -23,7 +20,6 @@ const config = getDefaultConfig({
   },
 });
 
-// Create a QueryClient instance
 const queryClient = new QueryClient();
 
 const Main = () => {
@@ -31,22 +27,9 @@ const Main = () => {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <Router>
-            <div className="flex flex-col min-h-screen">
-              <main className="flex-grow">
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/pages/signin" element={<SignIn />} />
-                  <Route path="/pages/signup" element={<SignUp />} />
-                  <Route path="/pages/onboarding" element={<Onboarding />} />
-                  <Route
-                    path="/pages/CreateShipmentForm"
-                    element={<CreateShipmentForm />}
-                  />
-                </Routes>
-              </main>
-            </div>
-          </Router>
+          <UserProvider>
+            <RouterProvider router={router} />
+          </UserProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
