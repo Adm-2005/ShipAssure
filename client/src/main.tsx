@@ -8,6 +8,7 @@ import { router } from './utils/config';
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { UserProvider } from './context/UserContext';
+import { ShipmentProvider } from './context/ShipmentContext';
 import '@rainbow-me/rainbowkit/styles.css';
 
 const config = getDefaultConfig({
@@ -29,7 +30,9 @@ const Main = () => {
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
           <UserProvider>
-            <RouterProvider router={router} />
+            <ShipmentProvider>
+              <RouterProvider router={router} />
+            </ShipmentProvider>
           </UserProvider>
         </RainbowKitProvider>
       </QueryClientProvider>

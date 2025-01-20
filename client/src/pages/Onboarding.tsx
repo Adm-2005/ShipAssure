@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -36,19 +35,31 @@ const OnboardingFlow = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
-    try {
-      const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/user/update`, 
-        organizationDetails, {
-        withCredentials: true
-      })
 
-      if(response.status === 200) {
-        setUser(response.data);
-        navigate('/dashboard');
+    try {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        console.log('Access Token missing.');
       }
-    } catch(error: any) {
-      setError(error.message);
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/update`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(organizationDetails),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data);
+        navigate('/dashboard');
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || 'Something went wrong!');
+      }
+    } catch (error: any) {
+      setError(error.message || 'An unexpected error occurred');
     }
     setLoading(false);
   };
@@ -60,7 +71,6 @@ const OnboardingFlow = () => {
   }, [isLoggedIn, navigate]);
 
   const transportModes = ['Air', 'Water', 'Railway', 'Road'];
-  
 
   return (
     <div className="flex flex-col justify-between min-h-screen bg-gray-50">

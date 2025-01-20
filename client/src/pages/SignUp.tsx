@@ -4,7 +4,6 @@ import MobileNavbar from '../components/mobileNav';
 import { Eye, EyeOff } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import axios from 'axios';
 import { CustomSignUpData } from '../utils/typings';
 import { useUser } from '../context/UserContext';
 
@@ -24,33 +23,45 @@ export default function SignUp() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/users/auth/register`,
-        formData,
-        { withCredentials: true }
-      );
-
-      if (response.status === 201) {
-        const userData = response.data.data; // Assuming `data` holds user details
-        setUser({
-          user: userData,
-          isLoggedIn: true,
-          setUser, // Ensure `setUser` remains accessible for future updates
-        });
-        navigate('/onboarding-quiz');
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        const { message, error: errorDetails } = errorData;
+        if (message) {
+          setError(message);
+        }
+        if (errorDetails) {
+          console.error('Error details:', errorDetails);
+        }
+        return;
       }
-    } catch (error: any) {
-      const { message, error: errorDetails } = error.response?.data || {};
-      if (message) {
-        setError(message);
-      }
-      if (errorDetails) {
-        console.error('Error details:', errorDetails);
-      }
+  
+      const responseData = await response.json();
+      const userData = responseData.data;
+      const token = responseData.token;
+  
+      setUser({
+        user: userData,
+        isLoggedIn: true,
+        setUser,
+      });
+      localStorage.setItem('access_token', token);
+      navigate('/onboarding-quiz');
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      setError('An unexpected error occurred. Please try again later.');
     }
   };
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

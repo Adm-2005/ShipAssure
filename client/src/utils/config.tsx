@@ -5,12 +5,18 @@ import SignUp from '../pages/SignUp';
 import SignIn from '../pages/SignIn';
 import ShipmentCreation from '../pages/ShipmentCreation';
 import Onboarding from '../pages/Onboarding';
+import Dashboard from '../pages/Dashboard';
+import BidSubmissionPage from '../pages/bidPage';
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <Home />,
     errorElement: <Error />,
+  },
+  {
+    path: '/dashboard',
+    element: <Dashboard />
   },
   {
     path: '/sign-up',
@@ -27,5 +33,9 @@ export const router = createBrowserRouter([
   {
     path: '/onboarding-quiz',
     element: <Onboarding />
+  },
+  {
+    path: '/submit-bid',
+    element: <BidSubmissionPage />
   }
 ]);

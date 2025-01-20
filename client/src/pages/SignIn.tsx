@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -44,29 +43,36 @@ const SignIn = () => {
   
     setLoading(true);
     try {
-      const response = await axios.post(
+      const response = await fetch(
         `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/users/auth/login`,
-        formData,
         {
-          withCredentials: true,
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
         }
       );
   
-      if (response.status === 200) {
-        setUser(response.data.data);
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data?.data);
+        const token = data?.token;
+        localStorage.setItem('access_token', token);
+  
         navigate('/');
-      }
-    } catch (error: any) {
-      const { message } = error.response?.data || {};
-      if (message) {
-        setError(message);
       } else {
-        setError('An error occurred. Please try again.');
+        const errorData = await response.json();
+        const message = errorData?.message || 'An error occurred. Please try again.';
+        setError(message);
       }
+    } catch (error) {
+      setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+  
   
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
